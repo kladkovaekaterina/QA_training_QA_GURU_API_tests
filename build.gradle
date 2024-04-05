@@ -1,0 +1,31 @@
+plugins {
+    id 'java-library'
+}
+
+def restAssuredVersion = "5.4.0",
+        junit5Version = "5.10.2"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(
+            "org.junit.jupiter:junit-jupiter:$junit5Version",
+            "io.rest-assured:rest-assured:$restAssuredVersion")
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    systemProperties(System.getProperties())
+    testLogging {
+        lifecycle {
+            events "started", "skipped", "failed", "standard_error", "standard_out"
+            exceptionFormat "short"
+        }
+    }
+}
