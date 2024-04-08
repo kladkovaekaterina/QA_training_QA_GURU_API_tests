@@ -1,6 +1,7 @@
 package tests;
 
 import io.restassured.RestAssured;
+import models.lombok.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -9,8 +10,10 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ReqresInTest {
+public class ReqresInWithModelsLombokTest {
 
     @BeforeAll
     public static void setUp() {
@@ -21,13 +24,11 @@ public class ReqresInTest {
     @Test
     void createUser() {
 
-        String data = """
-                {
-                    "name": "morpheus",
-                    "job": "leader"
-                }""";
+        UserBodyModel data = new UserBodyModel();
+        data.setName("morpheus");
+        data.setJob("leader");
 
-        given()
+        CreateUserResponseModel response = given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -41,7 +42,12 @@ public class ReqresInTest {
                 .log().status()
                 .log().body()
                 .statusCode(201)
-                .body("job", is("leader"));
+                .extract().as(CreateUserResponseModel.class);
+
+        assertEquals("morpheus", response.getName());
+        assertEquals("leader", response.getJob());
+        assertNotNull(response.getId());
+        assertNotNull(response.getCreatedAt());
     }
 
     @Test
@@ -64,13 +70,11 @@ public class ReqresInTest {
     @Test
     void updateUser() {
 
-        String data = """
-                {
-                    "name": "morpheus",
-                    "job": "zion resident"
-                }""";
+        UserBodyModel data = new UserBodyModel();
+        data.setName("morpheus");
+        data.setJob("zion resident");
 
-        given()
+        UpdateUserResponseModel response = given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -84,19 +88,21 @@ public class ReqresInTest {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .body("job", is("zion resident"));
+                .extract().as(UpdateUserResponseModel.class);
+
+        assertEquals("morpheus", response.getName());
+        assertEquals("zion resident", response.getJob());
+        assertNotNull(response.getUpdatedAt());
     }
 
     @Test
     void successfulRegistration() {
 
-        String data = """
-                {
-                    "email": "eve.holt@reqres.in",
-                    "password": "pistol"
-                }""";
+        RegistrationBodyModel data = new RegistrationBodyModel();
+        data.setEmail("eve.holt@reqres.in");
+        data.setPassword("pistol");
 
-        given()
+        RegistrationResponseModel response = given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -110,8 +116,9 @@ public class ReqresInTest {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .body("token", notNullValue())
-                .body("token", is("QpwL5tke4Pnpja7X4"));
+                .extract().as(RegistrationResponseModel.class);
+
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
     }
 
     @Test
