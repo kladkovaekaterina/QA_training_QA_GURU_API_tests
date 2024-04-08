@@ -3,6 +3,7 @@ package tests;
 import io.restassured.RestAssured;
 import models.pojo.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ReqresInWithSpecsTest {
     }
 
     @Test
+    @DisplayName("Проверка создания пользователя")
     void createUser() {
 
         UserBodyModel data = new UserBodyModel();
@@ -47,6 +49,7 @@ public class ReqresInWithSpecsTest {
     }
 
     @Test
+    @DisplayName("Проверка удаления пользователя")
     void deleteUser() {
 
         step("Make request", ()-> {
@@ -62,6 +65,7 @@ public class ReqresInWithSpecsTest {
     }
 
     @Test
+    @DisplayName("Проверка апдейта данных для пользователя")
     void updateUser() {
 
         UserBodyModel data = new UserBodyModel();
@@ -86,6 +90,7 @@ public class ReqresInWithSpecsTest {
     }
 
     @Test
+    @DisplayName("Проверка успешной регистрации пользователя")
     void successfulRegistration() {
 
         RegistrationBodyModel data = new RegistrationBodyModel();
@@ -106,6 +111,7 @@ public class ReqresInWithSpecsTest {
     }
 
     @Test
+    @DisplayName("Проверка фамилий пользователей, которые содержатся на 2 странице")
     void listUsers() {
 
         List<String> items = List.of("Lawson", "Ferguson", "Funke", "Fields", "Edwards", "Howell");

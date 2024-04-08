@@ -60,7 +60,8 @@ public class Specs {
             .log().uri()
             .log().body()
             .log().headers()
-            .basePath("/api/users?page=2");
+            .basePath("/api/users")
+            .param("page", "2");
 
     public static ResponseSpecification status200ResponseSpec = new ResponseSpecBuilder()
             .expectStatusCode(200)
