@@ -1,4 +1,4 @@
-package models.lombok;
+package reqresin.models.lombok;
 
 import lombok.Data;
 

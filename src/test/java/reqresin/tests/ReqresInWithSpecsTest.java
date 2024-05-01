@@ -1,21 +1,21 @@
-package tests;
+package reqresin.tests;
 
 import io.restassured.RestAssured;
-import models.pojo.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import reqresin.models.pojo.*;
 
 import java.util.List;
 
-import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-
-import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static reqresin.specs.Specs.*;
 
-public class ReqresInWithStepsTest {
+public class ReqresInWithSpecsTest {
 
     @BeforeAll
     public static void setUp() {
@@ -24,28 +24,22 @@ public class ReqresInWithStepsTest {
     }
 
     @Test
+    @DisplayName("Проверка создания пользователя")
     void createUser() {
 
         UserBodyModel data = new UserBodyModel();
         data.setName("morpheus");
         data.setJob("leader");
 
-        CreateUserResponseModel response = step("Make request", ()-> given()
-                .filter(withCustomTemplates())
-                .log().uri()
-                .log().body()
-                .log().headers()
+        CreateOrUpdateUserResponseModel response = step("Make request", ()-> given(createOrUpdateUserRequestSpec)
                 .body(data)
-                .contentType(JSON)
 
                 .when()
                 .post("/users")
 
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(201)
-                .extract().as(CreateUserResponseModel.class));
+                .spec(createUserResponseSpec)
+                .extract().as(CreateOrUpdateUserResponseModel.class));
 
         step("Check response", ()-> {
             assertEquals("morpheus", response.getName());
@@ -56,49 +50,38 @@ public class ReqresInWithStepsTest {
     }
 
     @Test
+    @DisplayName("Проверка удаления пользователя")
     void deleteUser() {
 
         step("Make request", ()-> {
-            given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().body()
-                    .log().headers()
+            given(deleteUserRequestSpec)
 
                     .when()
                     .delete("/users/2")
 
                     .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(204)
+                    .spec(deleteUserResponseSpec)
                     .body(emptyOrNullString());
         });
     }
 
     @Test
+    @DisplayName("Проверка апдейта данных для пользователя")
     void updateUser() {
 
         UserBodyModel data = new UserBodyModel();
         data.setName("morpheus");
         data.setJob("zion resident");
 
-        UpdateUserResponseModel response = step("Make request", ()-> given()
-                .filter(withCustomTemplates())
-                .log().uri()
-                .log().body()
-                .log().headers()
+        CreateOrUpdateUserResponseModel response = step("Make request", ()-> given(createOrUpdateUserRequestSpec)
                 .body(data)
-                .contentType(JSON)
 
                 .when()
                 .patch("/users/2")
 
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .extract().as(UpdateUserResponseModel.class));
+                .spec(status200ResponseSpec)
+                .extract().as(CreateOrUpdateUserResponseModel.class));
 
         step("Check response", ()-> {
             assertEquals("morpheus", response.getName());
@@ -108,51 +91,40 @@ public class ReqresInWithStepsTest {
     }
 
     @Test
+    @DisplayName("Проверка успешной регистрации пользователя")
     void successfulRegistration() {
 
         RegistrationBodyModel data = new RegistrationBodyModel();
         data.setEmail("eve.holt@reqres.in");
         data.setPassword("pistol");
 
-        RegistrationResponseModel response = step("Make request", ()-> given()
-                .filter(withCustomTemplates())
-                .log().uri()
-                .log().body()
-                .log().headers()
+        RegistrationResponseModel response = step("Make request", ()-> given(registrationRequestSpec)
                 .body(data)
-                .contentType(JSON)
 
                 .when()
                 .post("/register")
 
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
+                .spec(status200ResponseSpec)
                 .extract().as(RegistrationResponseModel.class));
 
         step("Check response", ()-> assertEquals("QpwL5tke4Pnpja7X4", response.getToken()));
     }
 
     @Test
+    @DisplayName("Проверка фамилий пользователей, которые содержатся на 2 странице")
     void listUsers() {
 
         List<String> items = List.of("Lawson", "Ferguson", "Funke", "Fields", "Edwards", "Howell");
 
         step("Make request", ()-> {
-            given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().body()
-                    .log().headers()
+            given(listUsersRequestSpec)
 
                     .when()
                     .get("/users?page=2")
 
                     .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(200)
+                    .spec(status200ResponseSpec)
                     .body("per_page", is(6))
                     .body("data.last_name", hasItems(items.toArray()));
         });

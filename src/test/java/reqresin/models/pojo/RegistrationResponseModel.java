@@ -1,4 +1,4 @@
-package models.pojo;
+package reqresin.models.pojo;
 
 public class RegistrationResponseModel {
 

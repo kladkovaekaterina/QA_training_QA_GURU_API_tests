@@ -1,7 +1,7 @@
-package tests;
+package reqresin.tests;
 
 import io.restassured.RestAssured;
-import models.lombok.*;
+import reqresin.models.lombok.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ public class ReqresInWithModelsLombokTest {
         data.setName("morpheus");
         data.setJob("leader");
 
-        CreateUserResponseModel response = given()
+        CreateOrUpdateUserResponseModel response = given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -42,7 +42,7 @@ public class ReqresInWithModelsLombokTest {
                 .log().status()
                 .log().body()
                 .statusCode(201)
-                .extract().as(CreateUserResponseModel.class);
+                .extract().as(CreateOrUpdateUserResponseModel.class);
 
         assertEquals("morpheus", response.getName());
         assertEquals("leader", response.getJob());
@@ -74,7 +74,7 @@ public class ReqresInWithModelsLombokTest {
         data.setName("morpheus");
         data.setJob("zion resident");
 
-        UpdateUserResponseModel response = given()
+        CreateOrUpdateUserResponseModel response = given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -88,7 +88,7 @@ public class ReqresInWithModelsLombokTest {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .extract().as(UpdateUserResponseModel.class);
+                .extract().as(CreateOrUpdateUserResponseModel.class);
 
         assertEquals("morpheus", response.getName());
         assertEquals("zion resident", response.getJob());

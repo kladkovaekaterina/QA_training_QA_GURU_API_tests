@@ -1,21 +1,16 @@
-package tests;
+package reqresin.tests;
 
 import io.restassured.RestAssured;
-import models.pojo.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-// with Allure
-public class ReqresInWithModelsPojoTest {
+public class ReqresInTest {
 
     @BeforeAll
     public static void setUp() {
@@ -26,12 +21,13 @@ public class ReqresInWithModelsPojoTest {
     @Test
     void createUser() {
 
-        UserBodyModel data = new UserBodyModel();
-        data.setName("morpheus");
-        data.setJob("leader");
+        String data = """
+                {
+                    "name": "morpheus",
+                    "job": "leader"
+                }""";
 
-        CreateUserResponseModel response = given()
-                .filter(withCustomTemplates())
+        given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -45,18 +41,12 @@ public class ReqresInWithModelsPojoTest {
                 .log().status()
                 .log().body()
                 .statusCode(201)
-                .extract().as(CreateUserResponseModel.class);
-
-        assertEquals("morpheus", response.getName());
-        assertEquals("leader", response.getJob());
-        assertNotNull(response.getId());
-        assertNotNull(response.getCreatedAt());
+                .body("job", is("leader"));
     }
 
     @Test
     void deleteUser() {
         given()
-                .filter(withCustomTemplates())
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -74,12 +64,13 @@ public class ReqresInWithModelsPojoTest {
     @Test
     void updateUser() {
 
-        UserBodyModel data = new UserBodyModel();
-        data.setName("morpheus");
-        data.setJob("zion resident");
+        String data = """
+                {
+                    "name": "morpheus",
+                    "job": "zion resident"
+                }""";
 
-        UpdateUserResponseModel response = given()
-                .filter(withCustomTemplates())
+        given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -93,22 +84,19 @@ public class ReqresInWithModelsPojoTest {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .extract().as(UpdateUserResponseModel.class);
-
-        assertEquals("morpheus", response.getName());
-        assertEquals("zion resident", response.getJob());
-        assertNotNull(response.getUpdatedAt());
+                .body("job", is("zion resident"));
     }
 
     @Test
     void successfulRegistration() {
 
-        RegistrationBodyModel data = new RegistrationBodyModel();
-        data.setEmail("eve.holt@reqres.in");
-        data.setPassword("pistol");
+        String data = """
+                {
+                    "email": "eve.holt@reqres.in",
+                    "password": "pistol"
+                }""";
 
-        RegistrationResponseModel response = given()
-                .filter(withCustomTemplates())
+        given()
                 .log().uri()
                 .log().body()
                 .log().headers()
@@ -122,9 +110,8 @@ public class ReqresInWithModelsPojoTest {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .extract().as(RegistrationResponseModel.class);
-
-        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
+                .body("token", notNullValue())
+                .body("token", is("QpwL5tke4Pnpja7X4"));
     }
 
     @Test
@@ -133,7 +120,6 @@ public class ReqresInWithModelsPojoTest {
         List<String> items = List.of("Lawson", "Ferguson", "Funke", "Fields", "Edwards", "Howell");
 
         given()
-                .filter(withCustomTemplates())
                 .log().uri()
                 .log().body()
                 .log().headers()

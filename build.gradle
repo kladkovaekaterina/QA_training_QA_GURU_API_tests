@@ -6,7 +6,8 @@ plugins {
 
 def restAssuredVersion = "5.4.0",
         junit5Version = "5.10.2",
-        allureVersion = "2.25.0"
+        allureVersion = "2.25.0",
+        selenideVersion = "7.1.0"
 
 allure {
     report {
@@ -28,10 +29,12 @@ repositories {
 
 dependencies {
     testImplementation(
+            "com.codeborne:selenide:$selenideVersion",
             "org.junit.jupiter:junit-jupiter:$junit5Version",
             "io.rest-assured:rest-assured:$restAssuredVersion",
             "io.rest-assured:json-schema-validator:$restAssuredVersion",
-            "io.qameta.allure:allure-rest-assured:$allureVersion")
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
+            "io.qameta.allure:allure-selenide:$allureVersion")
 }
 
 tasks.withType(JavaCompile) {
@@ -46,5 +49,11 @@ tasks.withType(Test) {
             events "started", "skipped", "failed", "standard_error", "standard_out"
             exceptionFormat "short"
         }
+    }
+}
+
+task demoqa_test(type: Test) {
+    useJUnitPlatform {
+        includeTags("demoqa")
     }
 }

@@ -1,4 +1,4 @@
-package specs;
+package reqresin.specs;
 
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -12,13 +12,12 @@ import static io.restassured.http.ContentType.JSON;
 
 public class Specs {
 
-    public static RequestSpecification createUserRequestSpec = with()
+    public static RequestSpecification createOrUpdateUserRequestSpec = with()
             .filter(withCustomTemplates())
             .log().uri()
             .log().body()
             .log().headers()
-            .contentType(JSON)
-            .basePath("/api/users");
+            .contentType(JSON);
 
     public static ResponseSpecification createUserResponseSpec = new ResponseSpecBuilder()
             .expectStatusCode(201)
@@ -30,8 +29,7 @@ public class Specs {
             .filter(withCustomTemplates())
             .log().uri()
             .log().body()
-            .log().headers()
-            .basePath("/api/users/2");
+            .log().headers();
 
     public static ResponseSpecification deleteUserResponseSpec = new ResponseSpecBuilder()
             .expectStatusCode(204)
@@ -39,29 +37,18 @@ public class Specs {
             .log(BODY)
             .build();
 
-    public static RequestSpecification updateUserRequestSpec = with()
-            .filter(withCustomTemplates())
-            .log().uri()
-            .log().body()
-            .log().headers()
-            .contentType(JSON)
-            .basePath("/api/users/2");
-
     public static RequestSpecification registrationRequestSpec = with()
             .filter(withCustomTemplates())
             .log().uri()
             .log().body()
             .log().headers()
-            .contentType(JSON)
-            .basePath("/api/register");
+            .contentType(JSON);
 
     public static RequestSpecification listUsersRequestSpec = with()
             .filter(withCustomTemplates())
             .log().uri()
             .log().body()
-            .log().headers()
-            .basePath("/api/users")
-            .param("page", "2");
+            .log().headers();
 
     public static ResponseSpecification status200ResponseSpec = new ResponseSpecBuilder()
             .expectStatusCode(200)

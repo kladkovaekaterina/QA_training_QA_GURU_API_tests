@@ -1,8 +1,8 @@
-package models.pojo;
+package reqresin.models.pojo;
 
-public class UpdateUserResponseModel {
+public class CreateOrUpdateUserResponseModel {
 
-    String name, job, updatedAt;
+    String name, job, id, createdAt, updatedAt;
 
     public void setName(String name) {
         this.name = name;
@@ -18,6 +18,22 @@ public class UpdateUserResponseModel {
 
     public String getJob() {
         return job;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 
     public void setUpdatedAt(String updatedAt) {
