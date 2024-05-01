@@ -17,9 +17,7 @@ public class TestBase {
     @BeforeAll
     static void beforeAll () {
         Configuration.baseUrl = "https://demoqa.com";
-        Configuration.browser = "edge";
         Configuration.pageLoadStrategy = "eager";
-        Configuration.holdBrowserOpen = true;
         RestAssured.baseURI = "https://demoqa.com";
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -39,6 +37,6 @@ public class TestBase {
         Attachments.browserConsoleLogs();
         Attachments.addVideo();
 
-        //closeWebDriver();
+        closeWebDriver();
     }
 }
