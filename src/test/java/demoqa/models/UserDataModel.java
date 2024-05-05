@@ -1,6 +1,6 @@
 package demoqa.models;
 
-public class UserModel {
+public class UserDataModel {
 
     String userName, password;
 

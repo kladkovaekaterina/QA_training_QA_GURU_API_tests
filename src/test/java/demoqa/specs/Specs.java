@@ -12,29 +12,28 @@ import static io.restassured.http.ContentType.JSON;
 
 public class Specs {
 
-    public static RequestSpecification requestSpec = with()
+    public static RequestSpecification requestUserAuthSpec = with()
             .filter(withCustomTemplates())
             .log().uri()
-            .log().body()
             .log().method()
-            .log().headers()
             .contentType(JSON);
 
-    public static ResponseSpecification loginResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(200)
-            .log(STATUS)
-            .log(BODY)
-            .build();
+    public static RequestSpecification requestBookSpec(String token) {
+        return with()
+                .filter(withCustomTemplates())
+                .header("Authorization", "Bearer " + token)
+                .log().uri()
+                .log().body()
+                .log().method()
+                .log().headers()
+                .contentType(JSON);
+    }
 
-    public static ResponseSpecification deleteBooksResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(204)
-            .log(STATUS)
-            .log(BODY)
-            .build();
-
-    public static ResponseSpecification addBooksResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(201)
-            .log(STATUS)
-            .log(BODY)
-            .build();
+    public static ResponseSpecification responseSpec(int statusCode) {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(statusCode)
+                .log(STATUS)
+                .log(BODY)
+                .build();
+    }
 }

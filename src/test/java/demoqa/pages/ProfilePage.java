@@ -1,13 +1,11 @@
 package demoqa.pages;
 
 import com.codeborne.selenide.SelenideElement;
-import demoqa.models.ResponseModel;
-import org.openqa.selenium.Cookie;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static demoqa.tests.TestData.userName;
 
 public class ProfilePage {
@@ -17,27 +15,14 @@ public class ProfilePage {
                                   confirmDeleteBooks = $("#closeSmallModal-ok"),
                                   booksList = $(".ReactTable");
 
-
-    public ProfilePage openRandomPageForCookieSetUp() {
-        open("/favicon.ico");
-
-        return this;
-    }
-
-    public ProfilePage setCookie(ResponseModel responseLogin) {
-        getWebDriver().manage().addCookie(new Cookie("userID", responseLogin.getUserId()));
-        getWebDriver().manage().addCookie(new Cookie("expires", responseLogin.getExpires()));
-        getWebDriver().manage().addCookie(new Cookie("token", responseLogin.getToken()));
-
-        return this;
-    }
-
+    @Step("Open profile page")
     public ProfilePage openProfilePage() {
         open("/profile");
 
         return this;
     }
 
+    @Step("Delete books")
     public ProfilePage deleteBooks() {
         deleteBooks.click();
         confirmDeleteBooks.click();
@@ -45,21 +30,22 @@ public class ProfilePage {
         return this;
     }
 
+    @Step("Check successful login")
     public ProfilePage checkLoginResult() {
         loginValue.shouldHave(text(userName));
 
         return this;
     }
 
+    @Step("Check books were added")
     public ProfilePage checkBooksWereAdded() {
         booksList.shouldHave(text("Speaking JavaScript"));
 
         return this;
     }
 
-    public ProfilePage checkBooksWereDeleted() {
+    @Step("Check books were deleted")
+    public void checkBooksWereDeleted() {
         booksList.shouldNotHave(text("Speaking JavaScript"));
-
-        return this;
     }
 }

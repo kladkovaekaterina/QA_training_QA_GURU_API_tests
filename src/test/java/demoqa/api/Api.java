@@ -1,68 +1,89 @@
 package demoqa.api;
 
-import demoqa.models.BooksModel;
+import demoqa.models.BookDataModel;
 import demoqa.models.ResponseModel;
-import demoqa.models.UserModel;
+import demoqa.models.UserDataModel;
+import io.qameta.allure.Step;
+import org.openqa.selenium.Cookie;
 
+import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static demoqa.specs.Specs.*;
 import static demoqa.tests.TestData.password;
 import static demoqa.tests.TestData.userName;
 import static io.restassured.RestAssured.given;
-import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Api {
 
-    public ResponseModel makeAuthApiPostRequest() {
-        UserModel data = new UserModel();
-        data.setUserName(userName);
-        data.setPassword(password);
+    ResponseModel responseModel = makeAuthApiPostRequest();
 
-        ResponseModel responseLogin = given(requestSpec)
-                .body(data)
+    public String token = responseModel.getToken(),
+                  username = responseModel.getUsername(),
+                  userId = responseModel.getUserId(),
+                  expires = responseModel.getExpires();
+
+    @Step("Make authorization request")
+    public ResponseModel makeAuthApiPostRequest() {
+        UserDataModel userData = new UserDataModel();
+        userData.setUserName(userName);
+        userData.setPassword(password);
+
+        return given(requestUserAuthSpec)
+                .body(userData)
 
                 .when()
                 .post("/Account/v1/Login")
 
                 .then()
-                .spec(loginResponseSpec)
+                .spec(responseSpec(200))
                 .extract().as(ResponseModel.class);
-
-        return responseLogin;
     }
 
-    public void checkAuthApiResponse(String userName, ResponseModel responseLogin) {
-        assertEquals(userName, responseLogin.getUsername());
-        assertNotNull(responseLogin.getToken());
+    @Step("Check authorization response")
+    public Api checkAuthApiResponse() {
+        assertEquals(userName, username);
+        assertNotNull(token);
+
+        return this;
     }
 
-    public void makeDeleteAllBooksRequest() {
-        given(requestSpec)
-                .header("Authorization", "Bearer " + makeAuthApiPostRequest().getToken())
-                .queryParams("UserId", makeAuthApiPostRequest().getUserId())
+    @Step("Set cookie")
+    public Api setCookie() {
+        open("/favicon.ico");
+        getWebDriver().manage().addCookie(new Cookie("userID", userId));
+        getWebDriver().manage().addCookie(new Cookie("expires", expires));
+        getWebDriver().manage().addCookie(new Cookie("token", token));
+
+        return this;
+    }
+
+    @Step("Make request to delete all books")
+    public Api makeDeleteAllBooksRequest() {
+        given(requestBookSpec(token))
+                .queryParams("UserId", userId)
 
                 .when()
                 .delete("/BookStore/v1/Books")
 
                 .then()
-                .spec(deleteBooksResponseSpec);
+                .spec(responseSpec(204));
+
+        return this;
     }
 
-    public void makeBookPostRequest() {
-        BooksModel bookData = new BooksModel();
-        bookData.setIsbn("9781449365035");
-        String bookDataRequest = format("{\"userId\":\"%s\",\"collectionOfIsbns\":[{\"isbn\":\"%s\"}]}",
-                makeAuthApiPostRequest().getUserId() , bookData.getIsbn());
+    @Step("Make request to add a book")
+    public void makeBookPostRequest(String isbn) {
+        BookDataModel bookData = new BookDataModel();
 
-        given(requestSpec)
-                .header("Authorization", "Bearer " + makeAuthApiPostRequest().getToken())
-                .body(bookDataRequest)
+        given(requestBookSpec(token))
+                .body(bookData.getBookDataRequest(userId, isbn))
 
                 .when()
                 .post("/BookStore/v1/Books")
 
                 .then()
-                .spec(addBooksResponseSpec);
+                .spec(responseSpec(201));
     }
 }

@@ -1,8 +1,11 @@
 package demoqa.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ResponseModel {
 
-    String userId, username, password, token, expires, created_date, isActive;
+    String userId, username, password, token, expires;
 
     public String getUserId() {
         return userId;
@@ -42,22 +45,6 @@ public class ResponseModel {
 
     public void setExpires(String expires) {
         this.expires = expires;
-    }
-
-    public String getCreated_date() {
-        return created_date;
-    }
-
-    public void setCreated_date(String created_date) {
-        this.created_date = created_date;
-    }
-
-    public String getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
     }
 
 }
