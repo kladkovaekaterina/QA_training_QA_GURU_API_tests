@@ -6,6 +6,8 @@ import demoqa.models.UserDataModel;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Cookie;
 
+import java.util.Collections;
+
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static demoqa.specs.Specs.*;
@@ -76,9 +78,13 @@ public class Api {
     @Step("Make request to add a book")
     public void makeBookPostRequest(String isbn) {
         BookDataModel bookData = new BookDataModel();
+        BookDataModel.CollectionOfIsbns isbnCollection = new BookDataModel.CollectionOfIsbns();
+        bookData.setUserId(userId);
+        isbnCollection.setIsbn(isbn);
+        bookData.setCollectionOfIsbns(Collections.singletonList(isbnCollection));
 
         given(requestBookSpec(token))
-                .body(bookData.getBookDataRequest(userId, isbn))
+                .body(bookData)
 
                 .when()
                 .post("/BookStore/v1/Books")

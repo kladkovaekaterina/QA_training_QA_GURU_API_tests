@@ -1,17 +1,18 @@
 package demoqa.models;
 
-import static java.lang.String.format;
+import lombok.Data;
 
+import java.util.List;
+
+@Data
 public class BookDataModel {
 
-    String bookDataRequest;
+    String userId;
+    List<CollectionOfIsbns> collectionOfIsbns;
 
-    public void setBookDataRequest(String bookDataRequest) {
-        this.bookDataRequest = bookDataRequest;
+    @Data
+    public static class CollectionOfIsbns {
+        String isbn;
     }
 
-    public String getBookDataRequest(String userId, String isbn) {
-        return bookDataRequest = format("{\"userId\":\"%s\",\"collectionOfIsbns\":[{\"isbn\":\"%s\"}]}",
-                userId, isbn);
-    }
 }
